@@ -50,6 +50,28 @@ import Combine
 /// -> View에 그려진 타입이 컬렉션 타입 + 참조 타입일 때
 ///
 /// + UIKit
+///  - UIKit에서도 @Observable를 사용할 경우 반응형 프로그래밍으로 개발할 수 있음
+///  - @Observable를 ViewModel에 선언하면 UIKit 내부에서 프로퍼티 값이 변경될 때마다 View를 무효화 하고 다시 그림
+///  -> setNeedLayout()을 수동으로 호출하지 않아도 됨
+///
+///  기존 layoutSubViews()는 데이터 업데이트와 레이아웃 처리를 동시에 진행
+/// - layoutSubViews()는 뷰의 위치, 크기를 계산하고 배치할 때 호출됨
+///  -> 속성 하나가 변경되도 레이아웃 자체를 다시 그림
+///  -> layoutSubViews() 자체는 직접 호출이 아닌 setNeedsLayout(), layoutIfNeeded()로 트리거
+///
+///  updateProperties()
+///  - 데이터(속성) 업데이트만 처리하는 메서드
+///  -> 레이아웃을 처리하지 않기 때문에 레이아웃을 재계산하는 불필요한 과정이 제거됨
+///  -> layoutSubviews() 직전에 호출
+///  - setNeedsUpdateProperties()를 호출하여 직접 호출 가능
+///  - iOS 26 +
+///
+///  viewWillLayoutSubviews()
+///  - layoutSubviews() 직전에 호출되는 메서드
+///  -> 레이아웃 준비 전에 호출됨
+///
+///  @Observable 사용 시
+///  - updateProperties, viewWillLayoutSubviews에 업데이트 되는 값을 지정함
 
 // 기존
 class ClassicViewModel: ObservableObject {
