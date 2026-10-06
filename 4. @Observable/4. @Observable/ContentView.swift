@@ -62,16 +62,17 @@ import Combine
 ///  updateProperties()
 ///  - 데이터(속성) 업데이트만 처리하는 메서드
 ///  -> 레이아웃을 처리하지 않기 때문에 레이아웃을 재계산하는 불필요한 과정이 제거됨
-///  -> layoutSubviews() 직전에 호출
+///  -> layoutSubviews() 직전에 호출 (순서: updateProperties -> viewWillLayoutSubviews -> layoutSubviews)
 ///  - setNeedsUpdateProperties()를 호출하여 직접 호출 가능
-///  - iOS 26 +
+///  - iOS 26 + (Info.plist에 UIObservationTrackingEnabled 추가 시 iOS 18까지 백포트 가능)
 ///
 ///  viewWillLayoutSubviews()
 ///  - layoutSubviews() 직전에 호출되는 메서드
 ///  -> 레이아웃 준비 전에 호출됨
 ///
-///  @Observable 사용 시
-///  - updateProperties, viewWillLayoutSubviews에 업데이트 되는 값을 지정함
+///  @Observable 사용 시, 프로퍼티를 "어디서 읽느냐"에 따라 자동 추적 여부가 갈림
+///  - iOS 26: updateProperties()에서 읽기만 해도 자동으로 추적되어 값이 바뀌면 재호출됨 (추가 호출 불필요)
+///  - iOS 18 백포트: updateProperties()가 없으므로 viewWillLayoutSubviews()에서 읽어야 자동 추적됨
 
 // 기존
 class ClassicViewModel: ObservableObject {
