@@ -25,6 +25,18 @@ import SwiftUI
 ///
 /// - Swift의 ViewBuilder도 ResultBuilder 중 하나
 ///
+/// ViewBuilder
+/// - 여러가지 뷰를 결합하여 사용할 때 사용
+/// - struct 타입이며, 클로저를 통해 여러 뷰를 전달받고 하나의 뷰로 만듦
+/// -> 클로저에서 childView를 구상하거나, View를 나열할 때 사용
+/// - VStack, List와 같은 컨테이너 뷰 내부 init에서 ViewBuilder를 사용 중
+///
+///  + some View는 하나의 타입의 뷰만 반환할 수 있음
+///  - AnyView를 사용할 경우 여러 타입의 뷰를 반환할 수 있지만, 타입을 소거하기 때문에 권하지 않음
+/// -> ViewBuilder를 사용하면 여러개의 뷰를 나열할 수 있음
+///
+/// + 기존 ViewBuilder는 child 매개변수가 10개까지만 구현되어 있었기 때문에, 10개의 자식만 가질 수 있었지만,
+/// parameter pack(가변 제네릭) 업데이트로 제한 없이 사용이 가능함
 
 // 사용하고 싶은 타입에 @resultBuilder로 선언
 @resultBuilder
@@ -50,6 +62,10 @@ struct ContentView: View {
         textList()
     }
     
+    func childView(@ViewBuilder _ childView: () -> some View) -> some View {
+        childView()
+    }
+    
     @State var title: String = ""
     
     var body: some View {
@@ -73,6 +89,13 @@ struct ContentView: View {
                 }
             } label: {
                 Text("타이틀 만들기")
+            }
+            
+            self.childView {
+                Text("이건 자식뷰를 viewBuilder로 만들었어")
+                Stepper(value: .constant(1)) {
+                    Text("Stepper")
+                }
             }
         }
         .padding()
